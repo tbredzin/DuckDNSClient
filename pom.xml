@@ -12,7 +12,7 @@
         <version.jre.launch4j>6</version.jre.launch4j>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <exeFileName>DuckDns</exeFileName>
-        <jarFileName>com.github.tbredzin.duckdns.duckdns</jarFileName>
+        <jarFileName>com.github.tbredzin.duckdns.Duckdns</jarFileName>
     </properties>
 
     <build>
@@ -63,7 +63,7 @@
                             <headerType>gui</headerType>
                             <stayAlive>false</stayAlive>
                             <classPath>
-                                <mainClass>com.github.tbredzin.duckdns.duckdns</mainClass>
+                                <mainClass>com.github.tbredzin.duckdns.Duckdns</mainClass>
                                 <addDependencies>true</addDependencies>
                                 <preCp>anything</preCp>
                             </classPath>
