@@ -3,7 +3,7 @@ DuckDns Updater is a Windows tray application that allows you to keep your dynam
 
 # Application Download
 You can download the application in jar, zip & rar format here:
-http://www.etx.ca/products/windows-applications/duckdns-update-client/
+http://www.etx.ca/products/windows-applications/com.github.tbredzin.duckdns.duckdns-update-client/
 
 # Source Code & Licensing
 Application is coded entirely in Java and only Eclipse was used during the process. As far as third party libraries only dependency is on JSoup (http://jsoup.org). 

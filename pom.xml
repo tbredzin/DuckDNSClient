@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.github.tbredzin</groupId>
+    <artifactId>DuckDNSClient</artifactId>
+    <version>1.0.0.0</version>
+
+    <properties>
+        <version.jre.launch4j>6</version.jre.launch4j>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <exeFileName>DuckDns</exeFileName>
+        <jarFileName>com.github.tbredzin.duckdns.duckdns</jarFileName>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>6</source>
+                    <target>6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                <artifactId>launch4j-maven-plugin</artifactId>
+                <version>1.7.16</version>
+                <executions>
+                    <execution>
+                        <id>l4j-clui</id>
+                        <phase>package</phase>
+                        <goals><goal>launch4j</goal></goals>
+                        <configuration>
+                            <dontWrapJar>false</dontWrapJar>
+                            <headerType>gui</headerType>
+                            <outfile>target/${exeFileName}.exe</outfile>
+                            <jar>target/${build.finalName}.jar</jar>
+                            <errTitle/>
+                            <cmdLine/>
+                            <chdir/>
+                            <priority>normal</priority>
+                            <downloadUrl>http://java.com/download</downloadUrl>
+                            <supportUrl/>
+                            <stayAlive>false</stayAlive>
+                            <manifest/>
+                            <icon>${project.basedir}/src/main/resources/logo.ico</icon>
+                            <singleInstance>
+                                <mutexName>DuckDnsUpdater</mutexName>
+                                <windowTitle>DuckDnsUpdater</windowTitle>
+                            </singleInstance>
+                            <jre>
+                                <path/>
+                                <bundledJre64Bit>false</bundledJre64Bit>
+                                <minVersion>1.0.0</minVersion>
+                                <maxVersion/>
+                                <jdkPreference>preferJre</jdkPreference>
+                                <runtimeBits>64/32</runtimeBits>
+                            </jre>
+                            <headerType>gui</headerType>
+                            <stayAlive>false</stayAlive>
+                            <classPath>
+                                <mainClass>com.github.tbredzin.duckdns.duckdns</mainClass>
+                                <addDependencies>true</addDependencies>
+                                <preCp>anything</preCp>
+                            </classPath>
+                            <versionInfo>
+                                <fileVersion>${version}</fileVersion>
+                                <txtFileVersion>${version}</txtFileVersion>
+                                <fileDescription>${project.name}</fileDescription>
+                                <copyright>MIT</copyright>
+                                <productVersion>${version}</productVersion>
+                                <txtProductVersion>${version}</txtProductVersion>
+                                <productName>${project.name}</productName>
+                                <originalFilename>${exeFileName}.exe</originalFilename>
+                                <!-- internalName is mandatory -->
+                                <internalName>${exeFileName}</internalName>
+                            </versionInfo>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.6.2</version>
+        </dependency>
+    </dependencies>
+
+</project>
