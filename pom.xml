@@ -9,10 +9,22 @@
     <version>1.0.0.0</version>
 
     <properties>
-        <version.jre.launch4j>6</version.jre.launch4j>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Plugins version -->
+        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <launch4j-maven-plugin.version>1.7.25</launch4j-maven-plugin.version>
+
+        <!-- launch4j plugin properties -->
         <exeFileName>DuckDns</exeFileName>
-        <jarFileName>com.github.tbredzin.duckdns.DuckDns</jarFileName>
+
+        <!-- Dependencies version -->
+        <jsoup.version>1.13.1</jsoup.version>
+
+        <!-- Java version -->
+        <maven-compiler-plugin.source>10</maven-compiler-plugin.source>
+        <maven-compiler-plugin.target>10</maven-compiler-plugin.target>
+
     </properties>
 
     <build>
@@ -20,15 +32,16 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
-                    <source>10</source>
-                    <target>10</target>
+                    <source>${maven-compiler-plugin.source}</source>
+                    <target>${maven-compiler-plugin.target}</target>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>com.akathist.maven.plugins.launch4j</groupId>
                 <artifactId>launch4j-maven-plugin</artifactId>
-                <version>1.7.16</version>
+                <version>${launch4j-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>l4j-clui</id>
@@ -38,7 +51,7 @@
                             <dontWrapJar>false</dontWrapJar>
                             <headerType>gui</headerType>
                             <outfile>target/${exeFileName}.exe</outfile>
-                            <jar>target/${build.finalName}.jar</jar>
+                            <jar>target/${project.build.finalName}.jar</jar>
                             <errTitle/>
                             <cmdLine/>
                             <chdir/>
@@ -68,12 +81,12 @@
                                 <preCp>anything</preCp>
                             </classPath>
                             <versionInfo>
-                                <fileVersion>${version}</fileVersion>
-                                <txtFileVersion>${version}</txtFileVersion>
+                                <fileVersion>${project.version}</fileVersion>
+                                <txtFileVersion>${project.version}</txtFileVersion>
                                 <fileDescription>${project.name}</fileDescription>
                                 <copyright>MIT</copyright>
-                                <productVersion>${version}</productVersion>
-                                <txtProductVersion>${version}</txtProductVersion>
+                                <productVersion>${project.version}</productVersion>
+                                <txtProductVersion>${project.version}</txtProductVersion>
                                 <productName>${project.name}</productName>
                                 <originalFilename>${exeFileName}.exe</originalFilename>
                                 <!-- internalName is mandatory -->
@@ -91,7 +104,7 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.9.1</version>
+            <version>${jsoup.version}</version>
         </dependency>
     </dependencies>
 
