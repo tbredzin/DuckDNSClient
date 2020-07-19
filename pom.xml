@@ -14,17 +14,18 @@
         <!-- Plugins version -->
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <launch4j-maven-plugin.version>1.7.25</launch4j-maven-plugin.version>
+        <maven-shade-plugin.version>3.2.3</maven-shade-plugin.version>
 
         <!-- launch4j plugin properties -->
         <exeFileName>DuckDns</exeFileName>
 
         <!-- Dependencies version -->
         <jsoup.version>1.13.1</jsoup.version>
+        <log4j-api.version>2.13.2</log4j-api.version>
 
         <!-- Java version -->
         <maven-compiler-plugin.source>10</maven-compiler-plugin.source>
         <maven-compiler-plugin.target>10</maven-compiler-plugin.target>
-
     </properties>
 
     <build>
@@ -39,6 +40,40 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>${maven-shade-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*</exclude>
+                                        <exclude>.settings/**</exclude>
+                                        <exclude>*.classpath</exclude>
+                                        <exclude>*.project</exclude>
+                                        <exclude>*.txt</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.github.tbredzin.duckdns.DuckDns</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- https://mvnrepository.com/artifact/com.akathist.maven.plugins.launch4j/launch4j-maven-plugin -->
                 <groupId>com.akathist.maven.plugins.launch4j</groupId>
                 <artifactId>launch4j-maven-plugin</artifactId>
                 <version>${launch4j-maven-plugin.version}</version>
@@ -46,7 +81,9 @@
                     <execution>
                         <id>l4j-clui</id>
                         <phase>package</phase>
-                        <goals><goal>launch4j</goal></goals>
+                        <goals>
+                            <goal>launch4j</goal>
+                        </goals>
                         <configuration>
                             <dontWrapJar>false</dontWrapJar>
                             <headerType>gui</headerType>
@@ -68,7 +105,7 @@
                             <jre>
                                 <path/>
                                 <bundledJre64Bit>false</bundledJre64Bit>
-                                <minVersion>1.0.0</minVersion>
+                                <minVersion>14.0.0</minVersion>
                                 <maxVersion/>
                                 <jdkPreference>preferJre</jdkPreference>
                                 <runtimeBits>64/32</runtimeBits>
@@ -105,6 +142,16 @@
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <version>${jsoup.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j-api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j-api.version}</version>
         </dependency>
     </dependencies>
 

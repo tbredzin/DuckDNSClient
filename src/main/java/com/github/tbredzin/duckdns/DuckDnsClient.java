@@ -1,5 +1,7 @@
 package com.github.tbredzin.duckdns;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -11,6 +13,7 @@ import java.util.Optional;
 
 public class DuckDnsClient {
 
+    private static final Logger LOGGER = LogManager.getLogger(DuckDnsClient.class);
     public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.120 Safari/535.2";
 
     public DuckDnsClient() {
@@ -26,7 +29,7 @@ public class DuckDnsClient {
                     .timeout(10 * 1000)
                     .get());
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(),e);
         }
         return Optional.empty();
     }

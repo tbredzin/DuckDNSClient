@@ -5,6 +5,8 @@ import com.github.tbredzin.duckdns.DuckDnsTimerTask;
 import com.github.tbredzin.duckdns.systemtray.popup.DuckDnsAbout;
 import com.github.tbredzin.duckdns.systemtray.popup.DuckDnsMyIp;
 import com.github.tbredzin.duckdns.systemtray.popup.DuckDnsSettingsDialog;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -25,6 +27,7 @@ import static javax.swing.JOptionPane.showMessageDialog;
 
 public class DuckdnsTray extends TrayIcon {
 
+    private static final Logger LOGGER = LogManager.getLogger(DuckdnsTray.class);
     private final String title;
     private final ResourceBundle resourceBundle;
     private final Preferences prefs;
@@ -66,8 +69,10 @@ public class DuckdnsTray extends TrayIcon {
                             prefs.put("refresh", settings.getRefresh());
                             fireEvent("refresh");
                         }
+                        LOGGER.info("Settings updated: {}", prefs);
                         displayMessage(title, this.resourceBundle.getString("panel.setting.ok"), MessageType.INFO);
                     } else {
+                        LOGGER.info("Settings update cancelled by user.");
                         displayMessage(title, this.resourceBundle.getString("panel.setting.cancel"), MessageType.INFO);
                     }
                 });
@@ -84,6 +89,7 @@ public class DuckdnsTray extends TrayIcon {
                 .addActionListener(e -> showMessageDialog(null, new DuckDnsAbout(this)));
         popup.add(new MenuItem(this.resourceBundle.getString("menu.exit")))
                 .addActionListener(e -> {
+                    LOGGER.info("Stopping Duckdns client");
                     SystemTray.getSystemTray().remove(this);
                     System.exit(0);
                 });
@@ -97,6 +103,7 @@ public class DuckdnsTray extends TrayIcon {
         try {
             return ResourceBundle.getBundle("MessageBundle");
         } catch (MissingResourceException mre) {
+            LOGGER.debug(mre.getMessage(), mre);
             return ResourceBundle.getBundle("MessageBundle", Locale.US);
         }
     }
@@ -148,8 +155,10 @@ public class DuckdnsTray extends TrayIcon {
             }
             Desktop.getDesktop().browse(new URI(urlToLaunch));
         } catch (URISyntaxException ex) {
+            LOGGER.error(ex.getMessage(), ex);
             JOptionPane.showMessageDialog(null, String.format(resourceBundle.getString("error.browser.invalid-url"), urlToLaunch));
         } catch (IOException ex) {
+            LOGGER.error(ex.getMessage(), ex);
             final String errorMsg = String.format(resourceBundle.getString("error.browser.unknown-error"), ex.getMessage());
             JOptionPane.showMessageDialog(null, errorMsg);
         }
