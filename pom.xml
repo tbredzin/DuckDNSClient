@@ -13,11 +13,13 @@
 
         <!-- Plugins version -->
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
+        <moditect-maven-plugin.version>1.0.0.RC1</moditect-maven-plugin.version>
         <launch4j-maven-plugin.version>1.7.25</launch4j-maven-plugin.version>
-        <maven-shade-plugin.version>3.2.3</maven-shade-plugin.version>
 
         <!-- launch4j plugin properties -->
-        <exeFileName>DuckDns</exeFileName>
+        <moduleName>com.github.tbredzin.duckdns</moduleName>
+        <mainClass>com.github.tbredzin.duckdns.DuckDns</mainClass>
 
         <!-- Dependencies version -->
         <jsoup.version>1.13.1</jsoup.version>
@@ -39,95 +41,100 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>${maven-shade-plugin.version}</version>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven-jar-plugin.version}</version>
+                <configuration>
+                    <outputDirectory>
+                        ${project.build.directory}/modules
+                    </outputDirectory>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.moditect</groupId>
+                <artifactId>moditect-maven-plugin</artifactId>
+                <version>${moditect-maven-plugin.version}</version>
                 <executions>
                     <execution>
-                        <phase>package</phase>
+                        <id>add-module-infos</id>
+                        <phase>generate-resources</phase>
                         <goals>
-                            <goal>shade</goal>
+                            <goal>add-module-info</goal>
                         </goals>
                         <configuration>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/*</exclude>
-                                        <exclude>.settings/**</exclude>
-                                        <exclude>*.classpath</exclude>
-                                        <exclude>*.project</exclude>
-                                        <exclude>*.txt</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-                            <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.github.tbredzin.duckdns.DuckDns</mainClass>
-                                </transformer>
-                            </transformers>
+                            <outputDirectory>${project.build.directory}/modules</outputDirectory>
+                            <overwriteExistingFiles>true</overwriteExistingFiles>
+                            <modules>
+                                <module>
+                                    <artifact>
+                                        <groupId>org.jsoup</groupId>
+                                        <artifactId>jsoup</artifactId>
+                                        <version>${jsoup.version}</version>
+                                    </artifact>
+                                    <moduleInfoSource>
+                                        module org.jsoup {
+                                            exports org.jsoup;
+                                            exports org.jsoup.helper;
+                                            exports org.jsoup.internal;
+                                            exports org.jsoup.nodes;
+                                            exports org.jsoup.parser;
+                                            exports org.jsoup.safety;
+                                            exports org.jsoup.select;
+                                        }
+                                    </moduleInfoSource>
+                                </module>
+                                <module>
+                                    <artifact>
+                                        <groupId>org.codehaus.mojo</groupId>
+                                        <artifactId>animal-sniffer-annotations</artifactId>
+                                        <version>1.18</version>
+                                    </artifact>
+                                    <moduleInfoSource>
+                                        module org.codehaus.mojo.animal_sniffer {
+                                            exports org.codehaus.mojo.animal_sniffer;
+                                        }
+                                    </moduleInfoSource>
+                                </module>
+                            </modules>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>create-runtime-image</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>create-runtime-image</goal>
+                        </goals>
+                        <configuration>
+                            <modulePath>
+                                <path>${project.build.directory}/modules</path>
+                            </modulePath>
+                            <modules>
+                                <module>com.github.tbredzin.duckdns</module>
+                            </modules>
+                            <launcher>
+                                <name>DuckDNSClient</name>
+                                <module>${moduleName}/${mainClass}</module>
+                            </launcher>
+                            <compression>2</compression>
+                            <stripDebug>true</stripDebug>
+                            <outputDirectory>${project.build.directory}/duckdns</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
-                <!-- https://mvnrepository.com/artifact/com.akathist.maven.plugins.launch4j/launch4j-maven-plugin -->
-                <groupId>com.akathist.maven.plugins.launch4j</groupId>
-                <artifactId>launch4j-maven-plugin</artifactId>
-                <version>${launch4j-maven-plugin.version}</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.1</version>
                 <executions>
                     <execution>
-                        <id>l4j-clui</id>
-                        <phase>package</phase>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
                         <goals>
-                            <goal>launch4j</goal>
+                            <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <dontWrapJar>false</dontWrapJar>
-                            <headerType>gui</headerType>
-                            <outfile>target/${exeFileName}.exe</outfile>
-                            <jar>target/${project.build.finalName}.jar</jar>
-                            <errTitle/>
-                            <cmdLine/>
-                            <chdir/>
-                            <priority>normal</priority>
-                            <downloadUrl>http://java.com/download</downloadUrl>
-                            <supportUrl/>
-                            <stayAlive>false</stayAlive>
-                            <manifest/>
-                            <icon>${project.basedir}/src/main/resources/logo.ico</icon>
-                            <singleInstance>
-                                <mutexName>DuckDnsUpdater</mutexName>
-                                <windowTitle>DuckDnsUpdater</windowTitle>
-                            </singleInstance>
-                            <jre>
-                                <path/>
-                                <bundledJre64Bit>false</bundledJre64Bit>
-                                <minVersion>14.0.0</minVersion>
-                                <maxVersion/>
-                                <jdkPreference>preferJre</jdkPreference>
-                                <runtimeBits>64/32</runtimeBits>
-                            </jre>
-                            <headerType>gui</headerType>
-                            <stayAlive>false</stayAlive>
-                            <classPath>
-                                <mainClass>com.github.tbredzin.duckdns.DuckDns</mainClass>
-                                <addDependencies>true</addDependencies>
-                                <preCp>anything</preCp>
-                            </classPath>
-                            <versionInfo>
-                                <fileVersion>${project.version}</fileVersion>
-                                <txtFileVersion>${project.version}</txtFileVersion>
-                                <fileDescription>${project.name}</fileDescription>
-                                <copyright>MIT</copyright>
-                                <productVersion>${project.version}</productVersion>
-                                <txtProductVersion>${project.version}</txtProductVersion>
-                                <productName>${project.name}</productName>
-                                <originalFilename>${exeFileName}.exe</originalFilename>
-                                <!-- internalName is mandatory -->
-                                <internalName>${exeFileName}</internalName>
-                            </versionInfo>
+                            <outputDirectory>${project.build.directory}/modules</outputDirectory>
+                            <includeScope>runtime</includeScope>
                         </configuration>
                     </execution>
                 </executions>
