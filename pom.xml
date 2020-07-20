@@ -21,7 +21,6 @@
 
         <!-- Dependencies version -->
         <jsoup.version>1.13.1</jsoup.version>
-        <log4j-api.version>2.13.2</log4j-api.version>
 
         <!-- Java version -->
         <maven-compiler-plugin.source>10</maven-compiler-plugin.source>
@@ -144,14 +143,20 @@
             <version>${jsoup.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>${log4j-api.version}</version>
+            <groupId>org.tinylog</groupId>
+            <artifactId>tinylog-api</artifactId>
+            <version>2.2.0-M1</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>${log4j-api.version}</version>
+            <groupId>org.tinylog</groupId>
+            <artifactId>tinylog-impl</artifactId>
+            <version>2.2.0-M1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>animal-sniffer-annotations</artifactId>
+            <version>1.18</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

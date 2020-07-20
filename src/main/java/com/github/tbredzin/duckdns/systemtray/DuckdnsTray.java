@@ -5,8 +5,7 @@ import com.github.tbredzin.duckdns.DuckDnsTimerTask;
 import com.github.tbredzin.duckdns.systemtray.popup.DuckDnsAbout;
 import com.github.tbredzin.duckdns.systemtray.popup.DuckDnsMyIp;
 import com.github.tbredzin.duckdns.systemtray.popup.DuckDnsSettingsDialog;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
+import org.tinylog.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -16,8 +15,6 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -27,7 +24,6 @@ import static javax.swing.JOptionPane.showMessageDialog;
 
 public class DuckdnsTray extends TrayIcon {
 
-    private static final Logger LOGGER = LogManager.getLogger(DuckdnsTray.class);
     private final String title;
     private final ResourceBundle resourceBundle;
     private final Preferences prefs;
@@ -69,10 +65,10 @@ public class DuckdnsTray extends TrayIcon {
                             prefs.put("refresh", settings.getRefresh());
                             fireEvent("refresh");
                         }
-                        LOGGER.info("Settings updated: {}", prefs);
+                        Logger.info("Settings updated: {}", prefs);
                         displayMessage(title, this.resourceBundle.getString("panel.setting.ok"), MessageType.INFO);
                     } else {
-                        LOGGER.info("Settings update cancelled by user.");
+                        Logger.info("Settings update cancelled by user.");
                         displayMessage(title, this.resourceBundle.getString("panel.setting.cancel"), MessageType.INFO);
                     }
                 });
@@ -89,7 +85,7 @@ public class DuckdnsTray extends TrayIcon {
                 .addActionListener(e -> showMessageDialog(null, new DuckDnsAbout(this)));
         popup.add(new MenuItem(this.resourceBundle.getString("menu.exit")))
                 .addActionListener(e -> {
-                    LOGGER.info("Stopping Duckdns client");
+                    Logger.info("Stopping Duckdns client");
                     SystemTray.getSystemTray().remove(this);
                     System.exit(0);
                 });
@@ -103,7 +99,7 @@ public class DuckdnsTray extends TrayIcon {
         try {
             return ResourceBundle.getBundle("MessageBundle");
         } catch (MissingResourceException mre) {
-            LOGGER.debug(mre.getMessage(), mre);
+            Logger.debug(mre.getMessage(), mre);
             return ResourceBundle.getBundle("MessageBundle", Locale.US);
         }
     }
@@ -135,14 +131,13 @@ public class DuckdnsTray extends TrayIcon {
     }
 
     public void updateToolTip() {
-        final DateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy hh:mm:ss aa");
         final int refreshInterval = Integer.parseInt(prefs.get("refresh", "5"));
         final Date nextRefresh = Date.from(Instant.now()
                 .plus(refreshInterval, ChronoUnit.MINUTES));
 
         this.setToolTip(title + "\n" +
                 lastUpdateStatus + "\n" +
-                String.format(resourceBundle.getString("tooltip.next-update-format"), dateFormat.format(nextRefresh)) + "\n" +
+                String.format(resourceBundle.getString("tooltip.next-update-format"), nextRefresh) + "\n" +
                 String.format(resourceBundle.getString("tooltip.refresh-minute-format"), refreshInterval)
         );
     }
@@ -155,10 +150,10 @@ public class DuckdnsTray extends TrayIcon {
             }
             Desktop.getDesktop().browse(new URI(urlToLaunch));
         } catch (URISyntaxException ex) {
-            LOGGER.error(ex.getMessage(), ex);
+            Logger.error(ex.getMessage(), ex);
             JOptionPane.showMessageDialog(null, String.format(resourceBundle.getString("error.browser.invalid-url"), urlToLaunch));
         } catch (IOException ex) {
-            LOGGER.error(ex.getMessage(), ex);
+            Logger.error(ex.getMessage(), ex);
             final String errorMsg = String.format(resourceBundle.getString("error.browser.unknown-error"), ex.getMessage());
             JOptionPane.showMessageDialog(null, errorMsg);
         }

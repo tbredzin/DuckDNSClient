@@ -1,8 +1,7 @@
 package com.github.tbredzin.duckdns;
 
 import com.github.tbredzin.duckdns.systemtray.DuckdnsTray;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.tinylog.Logger;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -13,7 +12,6 @@ import java.util.prefs.Preferences;
 
 public class DuckDns implements ActionListener, Runnable {
 
-    private static final Logger LOGGER = LogManager.getLogger(DuckDns.class);
     public static final String DUCK_DNS_TITLE = "DuckDns Updater (vs1.0.5)";
     private final Preferences preferences;
     private final DuckdnsTray duckdnsTray;
@@ -21,11 +19,11 @@ public class DuckDns implements ActionListener, Runnable {
 
     public static void main(String[] args) {
         try {
-            LOGGER.info("Starting Duckdns client");
+            Logger.info("Starting Duckdns client");
             DuckDns app = new DuckDns();
             new Thread(app).start();
         } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            Logger.error(e.getMessage(), e);
         }
     }
 
@@ -51,10 +49,10 @@ public class DuckDns implements ActionListener, Runnable {
                 Long.parseLong(preferences.get("refresh", "5"))
         );
         if (timer != null) {
-            LOGGER.info("Cancelling scheduled task for Duckdns client");
+            Logger.info("Cancelling scheduled task for Duckdns client");
             timer.cancel();
         }
-        LOGGER.info("Creating new scheduled task for Duckdns client period: {}m",
+        Logger.info("Creating new scheduled task for Duckdns client period: {}m",
                 TimeUnit.MILLISECONDS.toMinutes(refresh));
         timer = new Timer();
         timer.schedule(new DuckDnsTimerTask(duckdnsTray), refresh, refresh);
